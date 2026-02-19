@@ -9,7 +9,7 @@ from typing import Optional
 from dataclasses import dataclass
 from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
-from config import SELA_API_BASE_URL, SELA_API_KEY
+from config import SELA_API_BASE_URL, SELA_API_KEY, SELA_PRINCIPAL_ID
 
 
 @dataclass
@@ -28,12 +28,10 @@ class NewsItem:
 class SelaClient:
     """Client for interacting with Sela API - Multi-platform support"""
 
-    # Specific node for scraping jobs
-    PRINCIPAL_ID = "bp5ig-olchd-l53db-gzthv-p66z6-i6gwp-s6y4z-azqax-te7i5-hwu55-rqe"
-
     def __init__(self, api_key: str = SELA_API_KEY):
         self.api_key = api_key
         self.base_url = SELA_API_BASE_URL
+        self.PRINCIPAL_ID = SELA_PRINCIPAL_ID
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
