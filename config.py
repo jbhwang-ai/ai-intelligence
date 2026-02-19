@@ -4,7 +4,7 @@ Configuration for Market Intelligence Agent
 import os
 
 # Sela API Configuration
-SELA_API_BASE_URL = os.getenv("SELA_API_BASE_URL", "http://dev-api.selanetwork.io:8083")
+SELA_API_BASE_URL = os.getenv("SELA_API_BASE_URL", "https://api.selanetwork.io")
 SELA_API_KEY = os.getenv("SELA_API_KEY")
 
 # Slack Configuration

@@ -1,21 +1,21 @@
-# Market Intelligence Agent
+# AI Intelligence
 
-PM팀을 위한 실시간 마켓 인텔리전스 에이전트. Slack을 통해 AI, 브라우저 자동화, 스타트업 뉴스를 실시간으로 전달합니다.
+A real-time market intelligence agent for PM teams. Delivers AI, browser automation, and startup news instantly via Slack.
 
 ## Features
 
-- **실시간 모드**: 5분마다 뉴스 수집, 중요 뉴스 즉시 알림
-- **다이제스트 모드**: 매일 오전 9시 요약 전달
-- **Critical 플래깅**: 키워드, 소스 권위도, 긴급 시그널 기반 자동 태깅
-- **중복 제거**: SQLite 기반 deduplication
-- **Cross-check**: 다중 소스 검증 시 "Verified" 배지
+- **Realtime Mode**: Collects news every 5 minutes, instant alerts for critical items
+- **Digest Mode**: Daily summary delivered every morning at 9 AM
+- **Critical Flagging**: Auto-tagging based on keywords, source authority, and urgency signals
+- **Deduplication**: SQLite-based deduplication to avoid repeat alerts
+- **Cross-check**: "Verified" badge when an item is confirmed across multiple sources
 
 ## Quick Start
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/YOUR_USERNAME/market-intelligence-agent.git
-cd market-intelligence-agent
+git clone https://github.com/YOUR_USERNAME/ai-intelligence.git
+cd ai-intelligence
 
 # 2. Install dependencies
 pip install -r requirements.txt
@@ -58,41 +58,41 @@ Create a `.env` file based on `.env.example`:
 
 Additional settings in `config.py`:
 
-| 설정 | 설명 | 기본값 |
-|------|------|--------|
-| `POLLING_INTERVAL_MINUTES` | 수집 주기 | 5분 |
-| `DIGEST_HOUR` | 다이제스트 전송 시간 | 9시 |
-| `CRITICAL_KEYWORDS` | Critical 플래깅 키워드 | 다수 |
-| `HIGH_AUTHORITY_SOURCES` | 신뢰 소스 목록 | TechCrunch 등 |
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `POLLING_INTERVAL_MINUTES` | News collection interval | 5 min |
+| `DIGEST_HOUR` | Daily digest delivery time | 9 AM |
+| `CRITICAL_KEYWORDS` | Keywords for critical flagging | Multiple |
+| `HIGH_AUTHORITY_SOURCES` | Trusted source list | TechCrunch, etc. |
 
-## 모니터링 소스
+## Monitored Sources
 
-### Twitter 계정
-- 경쟁사: @browserbasehq, @browserless, @browser_use
-- AI 리더: @sama, @AndrewYNg, @OpenAI, @AnthropicAI
-- VC: @paulg, @garrytan, @sequoia
+### Twitter Accounts
+- Competitors: @browserbasehq, @browserless, @browser_use
+- AI Leaders: @sama, @AndrewYNg, @OpenAI, @AnthropicAI
+- VCs: @paulg, @garrytan, @sequoia
 
-### 뉴스 사이트
+### News Sites
 - TechCrunch, VentureBeat, Hacker News, The Verge
 
-### Google 검색
-- browserbase, browserless, AI agent 관련 키워드
+### Google Search
+- Keywords related to browserbase, browserless, AI agents
 
-## 프로젝트 구조
+## Project Structure
 
 ```
-market-intelligence-agent/
-├── agent.py          # 메인 에이전트 (스케줄러)
-├── config.py         # 설정
-├── sources.py        # 모니터링 소스 목록
-├── sela_client.py    # Sela API 클라이언트
-├── news_processor.py # 중복제거, 플래깅 로직
-├── slack_client.py   # Slack 전송
-├── requirements.txt  # 의존성
-└── news_cache.db     # SQLite DB (자동 생성)
+ai-intelligence/
+├── agent.py          # Main agent (scheduler)
+├── config.py         # Configuration
+├── sources.py        # Monitored sources list
+├── sela_client.py    # Sela API client
+├── news_processor.py # Deduplication and flagging logic
+├── slack_client.py   # Slack delivery
+├── requirements.txt  # Dependencies
+└── news_cache.db     # SQLite DB (auto-created)
 ```
 
-## Slack 메시지 형식
+## Slack Message Format
 
 ### Breaking News (Critical)
 ```

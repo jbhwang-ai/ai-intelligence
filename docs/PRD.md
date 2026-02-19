@@ -1,4 +1,4 @@
-# Market Intelligence Agent - PRD (Product Requirements Document)
+# AI Intelligence - PRD (Product Requirements Document)
 
 **Version:** 1.1.0
 **Last Updated:** 2025-01-25
@@ -9,7 +9,7 @@
 ## 1. 개요
 
 ### 1.1 제품 설명
-Market Intelligence Agent는 AI/자동화 스타트업 생태계의 뉴스, 투자, 경쟁사 동향을 실시간으로 수집하고 Slack으로 전달하는 자동화 에이전트입니다.
+AI Intelligence는 AI/자동화 스타트업 생태계의 뉴스, 투자, 경쟁사 동향을 실시간으로 수집하고 Slack으로 전달하는 자동화 에이전트입니다.
 
 ### 1.2 목표
 - **실시간 모니터링**: 경쟁사 및 시장 동향을 실시간으로 파악
@@ -144,7 +144,7 @@ Market Intelligence Agent는 AI/자동화 스타트업 생태계의 뉴스, 투�
 ### 3.2 파일 구조
 
 ```
-market-intelligence-agent/
+ai-intelligence/
 ├── agent.py              # 메인 에이전트 (스케줄러)
 ├── config.py             # 전역 설정 (API 키, 토큰)
 ├── sources.py            # 소스/키워드 관리
