@@ -6,7 +6,6 @@ import os
 # Sela API Configuration
 SELA_API_BASE_URL = os.getenv("SELA_API_BASE_URL", "https://api.selanetwork.io")
 SELA_API_KEY = os.getenv("SELA_API_KEY")
-SELA_PRINCIPAL_ID = os.getenv("SELA_PRINCIPAL_ID")
 
 # Slack Configuration
 SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")

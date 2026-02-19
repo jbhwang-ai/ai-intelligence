@@ -9,7 +9,7 @@ from typing import Optional
 from dataclasses import dataclass
 from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
-from config import SELA_API_BASE_URL, SELA_API_KEY, SELA_PRINCIPAL_ID
+from config import SELA_API_BASE_URL, SELA_API_KEY
 
 
 @dataclass
@@ -31,7 +31,6 @@ class SelaClient:
     def __init__(self, api_key: str = SELA_API_KEY):
         self.api_key = api_key
         self.base_url = SELA_API_BASE_URL
-        self.PRINCIPAL_ID = SELA_PRINCIPAL_ID
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
@@ -70,7 +69,6 @@ class SelaClient:
         payload = {
             "url": f"https://twitter.com/{username}",
             "scrapeType": "TWITTER_PROFILE",
-            "principalId": self.PRINCIPAL_ID,
             "timeoutMs": 60000,
             "postCount": post_count,
             "scrollPauseTime": 2000
@@ -123,7 +121,6 @@ class SelaClient:
         payload = {
             "url": post_url,
             "scrapeType": "TWITTER_POST",
-            "principalId": self.PRINCIPAL_ID,
             "timeoutMs": 60000,
             "replyCount": reply_count,
             "scrollPauseTime": 3000
@@ -160,7 +157,6 @@ class SelaClient:
             "search_parameters": {
                 "keywords": keywords
             },
-            "principalId": self.PRINCIPAL_ID,
             "timeoutMs": 120000,
             "postCount": post_count
         }
@@ -206,7 +202,6 @@ class SelaClient:
                 "scrapeType": "MEDIUM_SEARCH",
                 "keywords": keywords
             },
-            "principalId": self.PRINCIPAL_ID,
             "timeoutMs": 120000
         }
 
@@ -247,7 +242,6 @@ class SelaClient:
                 "scrapeType": "MEDIUM_POST",
                 "id": post_id
             },
-            "principalId": self.PRINCIPAL_ID,
             "timeoutMs": 60000
         }
 
@@ -348,7 +342,6 @@ class SelaClient:
         payload = {
             "url": url,
             "scrapeType": "HTML",
-            "principalId": self.PRINCIPAL_ID
         }
 
         result = self._make_request("/api/rpc/scrapeURL", payload)
@@ -420,7 +413,6 @@ class SelaClient:
             payload = {
                 "url": url,
                 "scrapeType": "HTML",
-                "principalId": self.PRINCIPAL_ID,
                 "timeoutMs": 60000
             }
 
@@ -701,7 +693,6 @@ class SelaClient:
         payload = {
             "url": "https://www.google.com/search",
             "scrapeType": "GOOGLE_SEARCH",
-            "principalId": self.PRINCIPAL_ID,
             "search_parameters": {
                 "engine": "google",
                 "q": query,

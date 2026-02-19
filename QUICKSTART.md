@@ -18,7 +18,6 @@
 cp .env.example .env
 # Edit .env with your credentials:
 # - SELA_API_KEY (required)
-# - SELA_PRINCIPAL_ID (required)
 # - SLACK_BOT_TOKEN (required)
 # - ANTHROPIC_API_KEY or GOOGLE_API_KEY (for AI summaries)
 ```
@@ -112,7 +111,7 @@ GOOGLE_SEARCH_QUERIES = [
 
 **Fix:**
 1. Check Sela API status
-2. Verify `SELA_PRINCIPAL_ID` in your `.env`
+2. Verify your Sela API credentials in `.env`
 3. Ensure the Twitter account is public
 4. Increase rate limiting delay
 
