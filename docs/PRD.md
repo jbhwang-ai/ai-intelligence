@@ -6,96 +6,96 @@
 
 ---
 
-## 1. 개요
+## 1. Overview
 
-### 1.1 제품 설명
-AI Intelligence는 AI/자동화 스타트업 생태계의 뉴스, 투자, 경쟁사 동향을 실시간으로 수집하고 Slack으로 전달하는 자동화 에이전트입니다.
+### 1.1 Product Description
+AI Intelligence is an automated agent that collects real-time news, investments, and competitor trends from the AI/automation startup ecosystem and delivers them via Slack.
 
-### 1.2 목표
-- **실시간 모니터링**: 경쟁사 및 시장 동향을 실시간으로 파악
-- **정보 통합**: 분산된 뉴스/소셜 미디어 정보를 단일 채널로 통합
-- **인사이트 제공**: Critical 뉴스 자동 플래깅 및 관련도 점수 계산
-- **글로벌 커버리지**: 100+ 언어, 전 세계 뉴스 소스 커버
+### 1.2 Goals
+- **Real-time Monitoring**: Track competitor and market trends as they happen
+- **Information Consolidation**: Aggregate scattered news/social media into a single channel
+- **Actionable Insights**: Auto-flag critical news and calculate relevance scores
+- **Global Coverage**: 100+ languages, worldwide news sources
 
-### 1.3 대상 사용자
-- 스타트업 창업자/경영진
-- 투자팀/BD팀
-- 제품/전략팀
-
----
-
-## 2. 기능 요구사항
-
-### 2.1 데이터 수집
-
-#### 2.1.1 Google News RSS (일반 뉴스)
-| 항목 | 설명 |
-|------|------|
-| **소스** | Google News RSS Feed |
-| **수집 방식** | 키워드 기반 검색 |
-| **언어** | 영어, 한국어 지원 |
-| **시간 범위** | 1시간 ~ 7일 |
-| **Rate Limit** | 0.5초/요청 |
-
-#### 2.1.2 GDELT DOC API (글로벌 뉴스)
-| 항목 | 설명 |
-|------|------|
-| **소스** | GDELT Project (100+ 언어, 전 세계 소스) |
-| **수집 방식** | 키워드 + 경쟁사 검색 |
-| **추가 데이터** | 감정 분석(Tone), 소스 국가, 언어 |
-| **시간 범위** | 15분 ~ 30일 |
-| **Rate Limit** | 1초/요청 |
-| **지연 시간** | 약 15분 |
-
-#### 2.1.3 Sela API (소셜 플랫폼)
-| 항목 | 설명 |
-|------|------|
-| **Twitter** | KOL/경쟁사 계정 모니터링 |
-| **LinkedIn** | 키워드 기반 검색 |
-| **Medium** | 기술 블로그 검색 |
-| **Rate Limit** | 2-3초/요청 |
-
-### 2.2 데이터 처리
-
-#### 2.2.1 중복 제거
-- URL 해시 기반 중복 체크
-- SQLite 데이터베이스 저장
-- 유사 뉴스 토픽 클러스터링
-
-#### 2.2.2 관련도 점수 계산
-```
-총점 = (MUST_HAVE 키워드 × 30점, 상한 60점)
-     + (INTEREST 키워드 × 10점, 상한 30점)
-     + (신뢰 소스 보너스 × 10점)
-
-최대 점수: 100점
-관련성 기준: 20점 이상
-```
-
-#### 2.2.3 Critical 플래깅
-다음 조건 중 하나 이상 충족 시 Critical로 표시:
-- MUST_HAVE 키워드 1개 이상 포함
-- 다중 소스 3개 이상에서 검증
-- 긴급 신호(BREAKING) + 신뢰 소스
-
-### 2.3 알림 전달
-
-#### 2.3.1 실시간 모드 (realtime)
-- 5분마다 수집 및 즉시 Slack 전송
-- Critical 뉴스 우선 표시
-
-#### 2.3.2 다이제스트 모드 (digest)
-- 하루 종일 수집, 지정 시간(오전 9시)에 요약 전송
-- Critical 뉴스는 즉시 전송
-
-#### 2.3.3 하이브리드 모드 (both)
-- Critical은 즉시, 전체는 다이제스트
+### 1.3 Target Users
+- Startup founders and executives
+- Investment and BD teams
+- Product and strategy teams
 
 ---
 
-## 3. 시스템 아키텍처
+## 2. Functional Requirements
 
-### 3.1 구성 요소
+### 2.1 Data Collection
+
+#### 2.1.1 Google News RSS (General News)
+| Field | Description |
+|-------|-------------|
+| **Source** | Google News RSS Feed |
+| **Method** | Keyword-based search |
+| **Languages** | English, Korean |
+| **Time Range** | 1 hour to 7 days |
+| **Rate Limit** | 0.5s per request |
+
+#### 2.1.2 GDELT DOC API (Global News)
+| Field | Description |
+|-------|-------------|
+| **Source** | GDELT Project (100+ languages, global sources) |
+| **Method** | Keyword + competitor search |
+| **Extra Data** | Sentiment (Tone), source country, language |
+| **Time Range** | 15 minutes to 30 days |
+| **Rate Limit** | 1s per request |
+| **Latency** | ~15 minutes |
+
+#### 2.1.3 Sela API (Social Platforms)
+| Field | Description |
+|-------|-------------|
+| **Twitter** | KOL/competitor account monitoring |
+| **LinkedIn** | Keyword-based search |
+| **Medium** | Tech blog search |
+| **Rate Limit** | 2-3s per request |
+
+### 2.2 Data Processing
+
+#### 2.2.1 Deduplication
+- URL hash-based duplicate check
+- SQLite database storage
+- Similar news topic clustering
+
+#### 2.2.2 Relevance Scoring
+```
+Total Score = (MUST_HAVE keywords × 30pts, cap 60pts)
+            + (INTEREST keywords × 10pts, cap 30pts)
+            + (Trusted source bonus × 10pts)
+
+Max Score: 100pts
+Relevance Threshold: 20pts or above
+```
+
+#### 2.2.3 Critical Flagging
+An item is flagged as Critical if it meets one or more of the following:
+- Contains 1+ MUST_HAVE keywords
+- Verified by 3+ independent sources
+- Urgency signal (BREAKING) + trusted source
+
+### 2.3 Alert Delivery
+
+#### 2.3.1 Realtime Mode
+- Collect every 5 minutes and send to Slack immediately
+- Critical news shown first
+
+#### 2.3.2 Digest Mode
+- Collect all day, send summary at scheduled time (9 AM)
+- Critical news sent immediately
+
+#### 2.3.3 Hybrid Mode
+- Critical alerts sent immediately, everything else in daily digest
+
+---
+
+## 3. System Architecture
+
+### 3.1 Components
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -119,9 +119,9 @@ AI Intelligence는 AI/자동화 스타트업 생태계의 뉴스, 투자, 경쟁
                 ┌─────────────────────────┐
                 │     NewsProcessor       │
                 │   (news_processor.py)   │
-                │  • 중복 제거            │
-                │  • 점수 계산            │
-                │  • Critical 플래깅      │
+                │  • Deduplication        │
+                │  • Scoring              │
+                │  • Critical Flagging    │
                 └─────────────────────────┘
                               │
                               ▼
@@ -141,75 +141,75 @@ AI Intelligence는 AI/자동화 스타트업 생태계의 뉴스, 투자, 경쟁
                 └─────────────────────────┘
 ```
 
-### 3.2 파일 구조
+### 3.2 File Structure
 
 ```
 ai-intelligence/
-├── agent.py              # 메인 에이전트 (스케줄러)
-├── config.py             # 전역 설정 (API 키, 토큰)
-├── sources.py            # 소스/키워드 관리
-├── keywords.py           # 필터링 키워드 (3단계)
-├── scoring.py            # 점수 계산 규칙
+├── agent.py              # Main agent (scheduler)
+├── config.py             # Global config (API keys, tokens)
+├── sources.py            # Source/keyword management
+├── keywords.py           # Filtering keywords (3 tiers)
+├── scoring.py            # Scoring rules
 │
-├── news_aggregator.py    # Google News RSS 수집
-├── gdelt_client.py       # GDELT DOC API 클라이언트
-├── sela_client.py        # Sela API 클라이언트
+├── news_aggregator.py    # Google News RSS collector
+├── gdelt_client.py       # GDELT DOC API client
+├── sela_client.py        # Sela API client
 │
-├── news_processor.py     # 뉴스 처리 (중복, 점수, 플래깅)
-├── slack_client.py       # Slack 메시지 전송
+├── news_processor.py     # News processing (dedup, scoring, flagging)
+├── slack_client.py       # Slack message delivery
 │
-├── news_cache.db         # SQLite 데이터베이스
-├── requirements.txt      # 의존성
+├── news_cache.db         # SQLite database (auto-created)
+├── requirements.txt      # Dependencies
 │
 └── docs/
-    └── PRD.md            # 이 문서
+    └── PRD.md            # This document
 ```
 
-### 3.3 기술 스택
+### 3.3 Tech Stack
 
-| 분류 | 기술 |
-|------|------|
-| **언어** | Python 3.9+ |
-| **스케줄링** | APScheduler 3.10+ |
+| Category | Technology |
+|----------|------------|
+| **Language** | Python 3.9+ |
+| **Scheduling** | APScheduler 3.10+ |
 | **HTTP** | requests 2.31+ |
-| **RSS 파싱** | feedparser 6.0+ |
-| **HTML 파싱** | BeautifulSoup4 4.12+ |
-| **데이터베이스** | SQLite3 (내장) |
-| **알림** | Slack SDK 3.27+ |
+| **RSS Parsing** | feedparser 6.0+ |
+| **HTML Parsing** | BeautifulSoup4 4.12+ |
+| **Database** | SQLite3 (built-in) |
+| **Notifications** | Slack SDK 3.27+ |
 
 ---
 
-## 4. GDELT 통합 상세
+## 4. GDELT Integration
 
-### 4.1 GDELT DOC API 개요
+### 4.1 GDELT DOC API Overview
 
-GDELT(Global Database of Events, Language, and Tone)는 전 세계 뉴스 미디어를 실시간으로 모니터링하고 분석하는 대규모 오픈 데이터베이스입니다.
+GDELT (Global Database of Events, Language, and Tone) is a large-scale open database that monitors and analyzes global news media in real-time.
 
-**선택 이유:**
-- 100+ 언어, 글로벌 커버리지
-- 무료 API, API 키 불필요
-- 감정 분석(Tone) 데이터 제공
-- 15분 지연으로 거의 실시간
+**Why GDELT:**
+- 100+ languages, global coverage
+- Free API, no API key required
+- Provides sentiment analysis (Tone) data
+- Near real-time with ~15 minute delay
 
-### 4.2 API 엔드포인트
+### 4.2 API Endpoint
 
 ```
 Base URL: https://api.gdeltproject.org/api/v2/doc/doc
 
 Parameters:
-- query: 검색어 (AND/OR/NOT 지원)
-- mode: artlist (기사 목록)
-- maxrecords: 최대 결과 수 (최대 250)
+- query: search terms (AND/OR/NOT supported)
+- mode: artlist (article list)
+- maxrecords: max results (up to 250)
 - format: json
-- timespan: 시간 범위 (15min, 1h, 24h, 7d, 30d)
-- sort: hybridrel (관련성+최신), datedesc (최신순)
+- timespan: time range (15min, 1h, 24h, 7d, 30d)
+- sort: hybridrel (relevance+recency), datedesc (newest first)
 ```
 
-### 4.3 GDELTClient 클래스
+### 4.3 GDELTClient Class
 
 ```python
 class GDELTClient:
-    """GDELT DOC API 클라이언트"""
+    """GDELT DOC API client"""
 
     def search(keyword, lang, country, timespan, max_results) -> list[NewsItem]
     def search_multiple(keywords, ...) -> list[NewsItem]
@@ -217,13 +217,13 @@ class GDELTClient:
     def get_tone_filtered(keyword, min_tone, max_tone) -> list[NewsItem]
 ```
 
-### 4.4 설정 (sources.py)
+### 4.4 Configuration (sources.py)
 
 ```python
 GDELT_SETTINGS = {
     "enabled": True,
     "languages": ["en"],
-    "countries": None,        # None = 전체
+    "countries": None,        # None = all countries
     "time_range": "7d",
     "max_per_keyword": 10,
     "rate_limit_sec": 1.0,
@@ -246,7 +246,7 @@ GDELT_COMPETITORS = [
 ]
 ```
 
-### 4.5 NewsItem 데이터 구조
+### 4.5 NewsItem Data Structure
 
 ```python
 @dataclass
@@ -258,84 +258,84 @@ class NewsItem:
     platform: str = "gdelt"
     timestamp: Optional[str] = None
     content_preview: Optional[str] = None
-    # GDELT 추가 필드
-    tone: Optional[float] = None      # 감정 점수 (-100 ~ +100)
+    # GDELT-specific fields
+    tone: Optional[float] = None      # Sentiment score (-100 to +100)
     language: Optional[str] = None
     source_country: Optional[str] = None
 ```
 
 ---
 
-## 5. 키워드 필터링 체계
+## 5. Keyword Filtering System
 
-### 5.1 3단계 분류
+### 5.1 Three-Tier Classification
 
-#### MUST_HAVE_KEYWORDS (Critical 자동 표시)
-- 경쟁사: browserbase, browserless, browser-use, stagehand
-- 브라우저 자동화: playwright, puppeteer, selenium, headless browser
+#### MUST_HAVE_KEYWORDS (Auto Critical)
+- Competitors: browserbase, browserless, browser-use, stagehand
+- Browser automation: playwright, puppeteer, selenium, headless browser
 - AI Agent: ai agent, autonomous agent, langchain, crewai
 - RPA: rpa, robotic process automation
 
-#### INTEREST_KEYWORDS (점수 증가)
-- LLM: gpt-5, claude, gemini, openai, anthropic
-- 기술: chrome extension, webdriver, cdp
-- 투자: series a/b/c, funding, acquisition
+#### INTEREST_KEYWORDS (Score Boost)
+- LLMs: gpt-5, claude, gemini, openai, anthropic
+- Tech: chrome extension, webdriver, cdp
+- Investment: series a/b/c, funding, acquisition
 
-#### EXCLUDE_KEYWORDS (필터링)
+#### EXCLUDE_KEYWORDS (Filter Out)
 - Crypto: crypto price, bitcoin, nft
-- 소비자: iphone, android, gaming
-- 기타: weather, sports, celebrity
+- Consumer: iphone, android, gaming
+- Other: weather, sports, celebrity
 
-### 5.2 신뢰 소스
+### 5.2 Trusted Sources
 
-**뉴스 도메인:**
+**News Domains:**
 - techcrunch.com, venturebeat.com, theverge.com
 - wired.com, reuters.com, bloomberg.com
 
-**Twitter 계정:**
+**Twitter Accounts:**
 - sama, AndrewYNg, OpenAI, AnthropicAI
 - browserbasehq, browserless
 
 ---
 
-## 6. 실행 가이드
+## 6. Running the Agent
 
-### 6.1 환경 설정
+### 6.1 Setup
 
 ```bash
-# 의존성 설치
+# Install dependencies
 pip install -r requirements.txt
 
-# 환경 변수 (선택적)
-export SLACK_BOT_TOKEN="xoxb-..."
-export SLACK_CHANNEL="market-intelligence"
+# Set environment variables
+cp .env.example .env
+# Edit .env with your credentials
 ```
 
-### 6.2 실행 명령어
+### 6.2 Commands
 
 ```bash
-# 테스트 (1회 수집)
+# Test (single collection)
 python3 agent.py --test
 
-# 실시간 모드 (5분마다 즉시 알림)
+# Realtime mode (instant alerts every 5 min)
 python3 agent.py --mode realtime
 
-# 다이제스트 모드 (오전 9시 요약)
+# Digest mode (9 AM daily summary)
 python3 agent.py --mode digest
 
-# 하이브리드 (Critical 즉시 + 다이제스트)
+# Hybrid (critical instantly + digest)
 python3 agent.py --mode both
 
-# 백그라운드 실행
+# Background execution
 nohup python3 agent.py --mode both > agent.log 2>&1 &
 ```
 
 ---
 
-## 7. 데이터베이스 스키마
+## 7. Database Schema
 
 ```sql
--- 중복 추적 & Critical 기록
+-- Deduplication & critical tracking
 CREATE TABLE seen_news (
     hash_id TEXT PRIMARY KEY,
     title TEXT,
@@ -347,7 +347,7 @@ CREATE TABLE seen_news (
     times_seen INTEGER
 );
 
--- 유사 뉴스 검증 (다중 소스 체크)
+-- Similar news verification (multi-source check)
 CREATE TABLE news_topics (
     id INTEGER PRIMARY KEY,
     topic_hash TEXT,
@@ -362,38 +362,38 @@ CREATE INDEX idx_news_topics_hash ON news_topics(topic_hash);
 
 ---
 
-## 8. 향후 계획
+## 8. Roadmap
 
-### Phase 1 - 완료
-- [x] Google News RSS 통합
-- [x] Sela API 통합 (Twitter, LinkedIn, Medium)
-- [x] GDELT DOC API 통합
-- [x] 중복 제거 및 점수 계산
-- [x] Slack 알림
+### Phase 1 - Completed
+- [x] Google News RSS integration
+- [x] Sela API integration (Twitter, LinkedIn, Medium)
+- [x] GDELT DOC API integration
+- [x] Deduplication and relevance scoring
+- [x] Slack notifications
 
-### Phase 2 - 계획
-- [ ] GDELT GKG API 통합 (엔티티 추출, 고급 감정 분석)
-- [ ] RSS 피드 수집 (TechCrunch, VentureBeat)
-- [ ] 웹사이트 HTML 스크래핑
+### Phase 2 - Planned
+- [ ] GDELT GKG API integration (entity extraction, advanced sentiment)
+- [ ] RSS feed collection (TechCrunch, VentureBeat)
+- [ ] Website HTML scraping
 
-### Phase 3 - 고도화
-- [ ] LLM 기반 뉴스 요약
-- [ ] 주간/월간 트렌드 리포트
-- [ ] 대시보드 UI
-- [ ] 알림 커스터마이징 (Slack 외 채널)
-
----
-
-## 9. 변경 이력
-
-| 버전 | 날짜 | 변경 내용 |
-|------|------|----------|
-| 1.0.0 | 2025-01-22 | 초기 버전 (Google News + Sela API) |
-| 1.1.0 | 2025-01-25 | GDELT DOC API 통합 |
+### Phase 3 - Future
+- [ ] LLM-based news summarization
+- [ ] Weekly/monthly trend reports
+- [ ] Dashboard UI
+- [ ] Multi-channel notifications (beyond Slack)
 
 ---
 
-## 10. 참고 자료
+## 9. Changelog
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0.0 | 2025-01-22 | Initial release (Google News + Sela API) |
+| 1.1.0 | 2025-01-25 | GDELT DOC API integration |
+
+---
+
+## 10. References
 
 - [GDELT Project](https://www.gdeltproject.org/)
 - [GDELT DOC API Documentation](https://blog.gdeltproject.org/gdelt-doc-2-0-api-documentation/)

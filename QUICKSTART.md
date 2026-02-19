@@ -1,93 +1,88 @@
-# Market Intelligence Agent - Quick Start
+# AI Intelligence - Quick Start
 
-## 현재 상태
+## Current Status
 
-✅ **완료된 작업**
-- 전체 에이전트 코드 구조 완성
-- Sela API 클라이언트 구현
-- 뉴스 프로세서 (중복 제거, Critical 플래깅)
-- Slack 클라이언트 (실시간 알림 + 다이제스트)
-- 스케줄러 및 메인 에이전트 로직
-- 의존성 설치 완료
+✅ **Completed**
+- Full agent code structure
+- Sela API client implementation
+- News processor (deduplication, critical flagging)
+- Slack client (realtime alerts + digest)
+- Scheduler and main agent logic
+- Dependencies installed
 
-🔄 **테스트 중**
-- 현재 `python3 agent.py --test` 실행 중
-- Twitter 스크래핑에서 일부 빈 결과 발생 (Sela API 응답 이슈 가능성)
+## How to Run
 
-## 실행 방법
-
-### 1. 환경 변수 설정 (선택사항)
+### 1. Set Environment Variables
 
 ```bash
-# Slack 토큰 설정 (이미 config.py에 하드코딩되어 있음)
-export SLACK_BOT_TOKEN="xoxb-your-token"
-export SLACK_CHANNEL="market-intelligence"
-
-# Sela API 키 (이미 config.py에 설정됨)
-export SELA_API_KEY="your-api-key"
+cp .env.example .env
+# Edit .env with your credentials:
+# - SELA_API_KEY (required)
+# - SELA_PRINCIPAL_ID (required)
+# - SLACK_BOT_TOKEN (required)
+# - ANTHROPIC_API_KEY or GOOGLE_API_KEY (for AI summaries)
 ```
 
-### 2. 실행 모드
+### 2. Run Modes
 
 ```bash
-# 테스트 실행 (1회 수집 후 종료)
+# Test run (single collection, then exit)
 python3 agent.py --test
 
-# 실시간 모드 (5분마다 수집, 즉시 알림)
+# Realtime mode (collect every 5 min, instant alerts)
 python3 agent.py --mode realtime
 
-# 다이제스트 모드 (하루 종일 수집, 오전 9시 요약 전송)
+# Digest mode (collect all day, send summary at 9 AM)
 python3 agent.py --mode digest
 
-# 하이브리드 모드 (Critical은 즉시, 전체는 다이제스트)
+# Hybrid mode (critical alerts instantly + daily digest)
 python3 agent.py --mode both
 ```
 
-### 3. 백그라운드 실행
+### 3. Run in Background
 
 ```bash
-# nohup으로 백그라운드 실행
+# Run in background with nohup
 nohup python3 agent.py --mode both > agent.log 2>&1 &
 
-# 로그 확인
+# Check logs
 tail -f agent.log
 
-# 프로세스 종료
+# Stop the process
 ps aux | grep agent.py
 kill <PID>
 ```
 
-## 설정 커스터마이징
+## Customization
 
-### config.py 주요 설정
+### config.py Key Settings
 
 ```python
-# 수집 주기 (분)
+# Collection interval (minutes)
 POLLING_INTERVAL_MINUTES = 5
 
-# 다이제스트 전송 시간
-DIGEST_HOUR = 9  # 오전 9시
+# Digest delivery time
+DIGEST_HOUR = 9   # 9 AM
 DIGEST_MINUTE = 0
 
-# Critical 키워드 추가
+# Add critical keywords
 CRITICAL_KEYWORDS = [
-    "breaking", "urgent", "속보",
+    "breaking", "urgent",
     "acquisition", "funding", "ipo",
-    # 여기에 추가...
+    # add more here...
 ]
 ```
 
-### sources.py 소스 추가
+### sources.py - Adding Sources
 
 ```python
-# Twitter 계정 추가
+# Add Twitter accounts
 TWITTER_ACCOUNTS = [
     "browserbasehq",
-    "your_account",  # 추가
-    # ...
+    "your_account",  # add here
 ]
 
-# 웹사이트 추가
+# Add websites
 NEWS_WEBSITES = [
     {
         "name": "Your Site",
@@ -96,66 +91,64 @@ NEWS_WEBSITES = [
     }
 ]
 
-# Google 검색 쿼리 추가
+# Add Google search queries
 GOOGLE_SEARCH_QUERIES = [
     "your search query",
-    # ...
 ]
 ```
 
-## Slack 채널 설정
+## Slack Setup
 
-1. Slack 워크스페이스에서 `#market-intelligence` 채널 생성
-2. Slack App 생성 및 Bot Token 발급
-3. 필요한 권한: `chat:write`, `chat:write.public`
-4. Bot을 채널에 초대: `/invite @your-bot-name`
+1. Create a `#market-intelligence` channel in your Slack workspace
+2. Create a Slack App and issue a Bot Token
+3. Required scopes: `chat:write`, `chat:write.public`
+4. Invite the bot to the channel: `/invite @your-bot-name`
 
-## 트러블슈팅
+## Troubleshooting
 
-### 문제: Twitter 스크래핑 결과가 비어있음
+### Twitter scraping returns empty results
 
-**원인**: Sela API가 빈 결과 반환 또는 노드 사용 불가
+**Cause:** Sela API returning empty results or no available nodes
 
-**해결책**:
-1. Sela API 상태 확인
-2. `principalId` 확인 (sela_client.py)
-3. Twitter 계정이 공개 계정인지 확인
-4. Rate limiting 대기 시간 증가
+**Fix:**
+1. Check Sela API status
+2. Verify `SELA_PRINCIPAL_ID` in your `.env`
+3. Ensure the Twitter account is public
+4. Increase rate limiting delay
 
-### 문제: Slack 메시지 전송 실패
+### Slack message delivery fails
 
-**원인**: 잘못된 토큰 또는 권한 부족
+**Cause:** Invalid token or insufficient permissions
 
-**해결책**:
-1. `python3 slack_client.py` 실행하여 연결 테스트
-2. Bot Token 재확인
-3. 채널에 Bot 초대 확인
+**Fix:**
+1. Test connection: `python3 slack_client.py`
+2. Re-check Bot Token
+3. Confirm bot has been invited to the channel
 
-### 문제: 중복 뉴스가 계속 전송됨
+### Duplicate news keeps being sent
 
-**원인**: 데이터베이스 초기화 또는 해시 충돌
+**Cause:** Database reset or hash collision
 
-**해결책**:
-1. `news_cache.db` 파일 확인
-2. 데이터베이스 정리: `processor.cleanup()`
-3. 해시 알고리즘 조정 (news_processor.py)
+**Fix:**
+1. Check `news_cache.db`
+2. Clean database: `processor.cleanup()`
+3. Adjust hashing logic in `news_processor.py`
 
-## 다음 단계
+## Next Steps
 
-1. **테스트 결과 확인**: 현재 실행 중인 테스트 완료 대기
-2. **Slack 채널 확인**: 메시지가 제대로 전송되는지 확인
-3. **실시간 모드 시작**: `python3 agent.py --mode both`
-4. **모니터링**: 로그 파일 확인 및 성능 튜닝
+1. **Verify test results**: Check output from `--test` run
+2. **Check Slack channel**: Confirm messages are delivered correctly
+3. **Start realtime mode**: `python3 agent.py --mode both`
+4. **Monitor**: Watch log files and tune performance
 
-## 성능 최적화
+## Performance Tips
 
-- **수집 주기 조정**: 5분 → 10분 (API 부하 감소)
-- **소스 수 제한**: 너무 많은 소스는 응답 시간 증가
-- **데이터베이스 정리**: 주기적으로 오래된 레코드 삭제
-- **Rate Limiting**: API 호출 사이 대기 시간 증가
+- **Adjust interval**: 5 min → 10 min to reduce API load
+- **Limit sources**: Too many sources increases response time
+- **Clean database**: Periodically delete old records
+- **Rate limiting**: Increase wait time between API calls
 
-## 참고 자료
+## References
 
-- [Sela API 문서](http://dev-api.selanetwork.io:8083/docs)
-- [Slack API 문서](https://api.slack.com/docs)
-- [APScheduler 문서](https://apscheduler.readthedocs.io/)
+- [Slack API Docs](https://api.slack.com/docs)
+- [APScheduler Docs](https://apscheduler.readthedocs.io/)
